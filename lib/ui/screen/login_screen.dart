@@ -1,16 +1,18 @@
+import 'package:bowerbird_miniapp/provider/auth_provider.dart';
 import 'package:bowerbird_miniapp/ui/widget/custom_textformfield.dart';
 import 'package:bowerbird_miniapp/util/constant.dart';
 import 'package:bowerbird_miniapp/util/validation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class LoginScreen extends StatefulWidget {
+class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  LoginScreenState createState() => LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class LoginScreenState extends ConsumerState<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -46,8 +48,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.symmetric(
-                        vertical: PaddingConstant.quarterPadding),
+                    padding: const EdgeInsets.only(
+                        bottom: PaddingConstant.doublePadding),
                     child: Text(
                       "Log in to BowerBird",
                       style: Theme.of(context)
@@ -74,6 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                   ),
                   CustomTextFormField(
+                    obscureText: true,
                     controller: passwordController,
                     validator: (value) => Validation.validateEmpty(
                         value: value, fieldName: "password"),
@@ -86,7 +89,10 @@ class _LoginScreenState extends State<LoginScreen> {
                     child: ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState?.validate() == true) {
-                          //TODO login
+                          ref.read(loginProvider.notifier).login((
+                            email: emailController.text.trim(),
+                            password: passwordController.text.trim()
+                          ));
                         }
                       },
                       child: const Text("LOGIN"),

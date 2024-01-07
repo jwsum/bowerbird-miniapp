@@ -6,6 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+final GlobalKey<ScaffoldMessengerState> scaffoldMessengerKey =
+    GlobalKey<ScaffoldMessengerState>();
 Future<void> main() async {
   GoogleFonts.config.allowRuntimeFetching = false;
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,6 +28,8 @@ class MyApp extends StatelessWidget {
       title: 'BowerBird Demo',
       theme: appTheme,
       home: const AuthScreen(),
+      scaffoldMessengerKey: scaffoldMessengerKey,
+      debugShowCheckedModeBanner: false,
     );
   }
 }

@@ -22,7 +22,11 @@ class SharedUtility {
     return sharedPreferences.getString(kSharedTokenKey);
   }
 
-  void setToken(String token) {
-    sharedPreferences.setString(kSharedTokenKey, token);
+  void setToken(String? token) {
+    if (token != null) {
+      sharedPreferences.setString(kSharedTokenKey, token);
+    } else {
+      sharedPreferences.remove(kSharedTokenKey);
+    }
   }
 }

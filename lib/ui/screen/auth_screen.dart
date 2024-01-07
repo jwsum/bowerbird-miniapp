@@ -11,7 +11,7 @@ class AuthScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final auth = ref.watch(authProvider);
+    final auth = ref.watch(loginProvider).value;
 
     switch (auth) {
       case AuthStatus.unauthenticated:
