@@ -16,6 +16,27 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  String? emailInvalidMessage;
+  String? passwordInvalidMessage;
+
+  @override
+  void initState() {
+    // emailController.text = "jw_sum@yahoo.com";
+    // passwordController.text = "jianwei321";
+    super.initState();
+  }
+
+  ///
+  /// return true if the form is validate
+  bool validateForm() {
+    setState(() {
+      emailInvalidMessage = Validation.validateEmail(emailController.text);
+      passwordInvalidMessage = Validation.validateEmpty(
+          value: passwordController.text, fieldName: "Password");
+    });
+
+    return emailInvalidMessage == null && passwordInvalidMessage == null;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +70,8 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(
-                        bottom: PaddingConstant.doublePadding),
+                      bottom: PaddingConstant.doublePadding,
+                    ),
                     child: Text(
                       "Log in to BowerBird",
                       style: Theme.of(context)
@@ -59,28 +81,66 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
                               color: Colors.black, fontWeight: FontWeight.bold),
                     ),
                   ),
-                  Text(
-                    "Email",
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: Colors.black,
-                        ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      bottom: PaddingConstant.quarterPadding,
+                    ),
+                    child: Text(
+                      "Email",
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            color: Colors.black,
+                          ),
+                    ),
                   ),
                   CustomTextFormField(
                     controller: emailController,
                     validator: Validation.validateEmail,
                   ),
-                  Text(
-                    "Password",
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: Colors.black,
-                        ),
+                  if (emailInvalidMessage != null)
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: PaddingConstant.quarterPadding,
+                      ),
+                      child: Text(
+                        emailInvalidMessage!,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Colors.red,
+                            ),
+                      ),
+                    ),
+                  const SizedBox(
+                    height: PaddingConstant.defaultPadding,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(
+                      bottom: PaddingConstant.quarterPadding,
+                    ),
+                    child: Text(
+                      "Password",
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            color: Colors.black,
+                          ),
+                    ),
                   ),
                   CustomTextFormField(
                     obscureText: true,
+                    maxLines: 1,
                     controller: passwordController,
                     validator: (value) => Validation.validateEmpty(
                         value: value, fieldName: "password"),
                   ),
+                  if (passwordInvalidMessage != null)
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        top: PaddingConstant.quarterPadding,
+                      ),
+                      child: Text(
+                        passwordInvalidMessage!,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                              color: Colors.red,
+                            ),
+                      ),
+                    ),
                   Container(
                     padding: const EdgeInsets.symmetric(
                       vertical: PaddingConstant.defaultPadding,
@@ -88,7 +148,7 @@ class LoginScreenState extends ConsumerState<LoginScreen> {
                     width: MediaQuery.of(context).size.width,
                     child: ElevatedButton(
                       onPressed: () {
-                        if (_formKey.currentState?.validate() == true) {
+                        if (validateForm()) {
                           ref.read(loginProvider.notifier).login((
                             email: emailController.text.trim(),
                             password: passwordController.text.trim()

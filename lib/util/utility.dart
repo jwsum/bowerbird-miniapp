@@ -7,7 +7,16 @@ class Util {
     return RegExp(r'^[a-zA-Z0-9._+-]+@[a-zA-Z0-9.+-]+\.[a-zA-Z]+').hasMatch(s);
   }
 
-  static String getTimeDifference(String inputDateString) {
+  static String getTimeFromString(String inputDateString) {
+    DateTime inputDate = DateTime.parse(inputDateString);
+    return formatTime(inputDate);
+  }
+
+  static String getTimeDifference(String? inputDateString) {
+    if (inputDateString == null) {
+      return "";
+    }
+
     // Get the current date and time
     DateTime now = DateTime.now();
     DateTime inputDate = DateTime.parse(inputDateString);

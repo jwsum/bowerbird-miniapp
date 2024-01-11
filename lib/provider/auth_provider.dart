@@ -1,4 +1,5 @@
 import 'package:bowerbird_miniapp/main.dart';
+import 'package:bowerbird_miniapp/model/user.dart';
 import 'package:bowerbird_miniapp/provider/shared_pref_provider.dart';
 import 'package:bowerbird_miniapp/repository.dart';
 import 'package:bowerbird_miniapp/util/enum.dart';
@@ -30,6 +31,7 @@ class LoginActivity extends AutoDisposeAsyncNotifier<AuthStatus> {
     final repo = ref.watch(repositoryProvider);
     var result = await repo.login(arg.email, arg.password);
     String? token = result['jwt_token'];
+    ref.read(userProvider.notifier).state = User.fromJson(result['data']);
 
     if (token != null) {
       ref.read(sharedUtilityProvider).setToken(token);
@@ -46,3 +48,5 @@ class LoginActivity extends AutoDisposeAsyncNotifier<AuthStatus> {
     state = const AsyncData(AuthStatus.unauthenticated);
   }
 }
+
+final userProvider = StateProvider<User?>((ref) => null);

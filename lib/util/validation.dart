@@ -4,7 +4,7 @@ class Validation {
   static String? validateEmpty(
       {required String? value, String fieldName = "field"}) {
     if (value == null || value.isEmpty) {
-      return "This $fieldName cannot be empty";
+      return "$fieldName cannot be empty";
     } else {
       return null;
     }

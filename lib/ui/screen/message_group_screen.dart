@@ -1,6 +1,8 @@
+import 'package:bowerbird_miniapp/model/message.dart';
 import 'package:bowerbird_miniapp/model/message_group.dart';
 import 'package:bowerbird_miniapp/provider/auth_provider.dart';
 import 'package:bowerbird_miniapp/provider/message_group_provider.dart';
+import 'package:bowerbird_miniapp/ui/screen/message_screen.dart';
 import 'package:bowerbird_miniapp/util/constant.dart';
 import 'package:bowerbird_miniapp/util/utility.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +15,14 @@ class MessageGroupScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Message Group"),
+        title: Text(
+          "Message Group",
+          style: Theme.of(context)
+              .textTheme
+              .headlineMedium
+              ?.copyWith(color: Colors.white),
+        ),
+        backgroundColor: Theme.of(context).primaryColor,
         actions: [
           TextButton(
             onPressed: () {
@@ -42,17 +51,52 @@ class MessageGroupScreen extends ConsumerWidget {
                         return dateTimeB.compareTo(dateTimeA);
                       });
                       MessageGroup messageGroup = value[index];
+                      AsyncValue<List<Message>> messages = ref.watch(
+                        messageProvider(messageGroup.id),
+                      );
+
+                      String? lastMessage =
+                          messages.valueOrNull?.isNotEmpty == true
+                              ? messages.valueOrNull?.first.message
+                              : null;
                       return ListTile(
                         title: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(messageGroup.name),
-                            Text(Util.getTimeDifference(messageGroup.updatedAt))
+                            Text(
+                              messageGroup.name,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleMedium
+                                  ?.copyWith(fontWeight: FontWeight.bold),
+                            ),
+                            Text(
+                              Util.getTimeDifference(messageGroup.updatedAt),
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            )
                           ],
                         ),
+                        subtitle: Text(
+                          lastMessage ?? "No message",
+                          style: lastMessage != null
+                              ? Theme.of(context).textTheme.bodyMedium
+                              : Theme.of(context).textTheme.bodySmall,
+                        ),
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute<void>(
+                              builder: (BuildContext context) => MessageScreen(
+                                messageGroupId: messageGroup.id,
+                              ),
+                            ),
+                          );
+                        },
                       );
                     },
-                    separatorBuilder: (context, index) => const Divider(),
+                    separatorBuilder: (context, index) => const Divider(
+                      indent: PaddingConstant.defaultPadding,
+                      endIndent: PaddingConstant.defaultPadding,
+                    ),
                   ),
             AsyncError() => const Center(
                 child: Text('Oops, something unexpected happened'),

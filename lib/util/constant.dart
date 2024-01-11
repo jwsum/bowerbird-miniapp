@@ -10,3 +10,7 @@ class PaddingConstant {
   static const double defaultPadding = 16.0;
   static const double doublePadding = defaultPadding * 2;
 }
+
+class ColorConstant {
+  static List<MaterialAccentColor> messageColorList = Colors.accents;
+}
